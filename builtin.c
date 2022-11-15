@@ -4,6 +4,7 @@
  * @lineptr: pointer to strings of arguments in shell
  * Return: nothing
  */
+
 void exit_built(char *lineptr)
 {
 	free(lineptr);
