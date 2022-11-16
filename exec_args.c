@@ -37,7 +37,7 @@ void create_child(char **args, char *lineptr, char **av)
 		{
 			if (execve(temp_command, args, environ) == -1)
 			{
-				perror("Error");
+				perror("");
 				exit(1);
 			}
 		}
@@ -62,7 +62,7 @@ void exec_command(char **av, char *lineptr, size_t bufsize)
 {
 	char *delim = " \n\t";
 	char **args;
-	char *prompt = "#cisfun$ ";
+	char *prompt = "$ ";
 	ssize_t nread;
 	int i;
 

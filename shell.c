@@ -5,16 +5,18 @@
  * @av: pointer to strings of command line arguments
  * Return: 0 on success
  */
-int main(int __attribute__((unused)) ac, char **av)
+int main(int ac, char **av)
 {
 	char *lineptr;
 	size_t bufsize;
 
+	bufsize = 0;
+	lineptr = NULL;
+
 	do {
-		bufsize = 0;
-		lineptr = NULL;
 		exec_command(av, lineptr, bufsize);
 	} while (1);
+
 
 	return (0);
 }
