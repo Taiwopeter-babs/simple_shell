@@ -34,7 +34,6 @@ void print_str(char *str, int new_line)
 /**
  * print_error - prints error message to stdout
  * @av: name of program running shell
- * @count: number of commands
  * @command: command not found to be printed
  * Return: nothing
  */

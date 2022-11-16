@@ -4,7 +4,6 @@
  * @args: array of strings that contain the command and arguments
  * @lineptr: pointer to line that was read
  * @av: Name of program running the shell
- * @count: number of commands
  * Return: nothing
  */
 void create_child(char **args, char *lineptr, char **av)
@@ -57,7 +56,6 @@ void create_child(char **args, char *lineptr, char **av)
  * and will be dynamically allocated memory by getline()
  * @bufsize: size of lineptr (set to 0, will be the size of memory allocated
  * by getline().
- * @cmd_count: number of commands input
  * Return: nothing
  */
 void exec_command(char **av, char *lineptr, size_t bufsize)
