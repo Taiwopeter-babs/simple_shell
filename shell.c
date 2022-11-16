@@ -5,7 +5,7 @@
  * @av: pointer to strings of command line arguments
  * Return: 0 on success
  */
-int main(int ac, char **av)
+int main(int __attribute__((unused)) ac, char **av)
 {
 	char *lineptr;
 	size_t bufsize;
