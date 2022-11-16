@@ -4,6 +4,10 @@
  * @lineptr: pointer to strings of arguments in shell
  * Return: nothing
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 22220f1b578f4724b09aebc5dac8d442176223b6
 void exit_built(char *lineptr)
 {
 	free(lineptr);
@@ -15,7 +19,11 @@ void exit_built(char *lineptr)
  * @args: pointer to strings of arguments in shell
  * Return: nothing
  */
+<<<<<<< HEAD
 void env_shell(char _attribute_((unused)) *args)
+=======
+void env_shell(char __attribute__((unused)) *args)
+>>>>>>> 22220f1b578f4724b09aebc5dac8d442176223b6
 {
 	size_t k, j;
 
