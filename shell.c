@@ -7,16 +7,13 @@
  */
 int main(int __attribute__((unused)) ac, char **av)
 {
-	int cmd_count;
 	char *lineptr;
 	size_t bufsize;
 
-	cmd_count = 0;
 	do {
-		cmd_count++;
 		bufsize = 0;
 		lineptr = NULL;
-		exec_command(av, lineptr, bufsize, cmd_count);
+		exec_command(av, lineptr, bufsize);
 	} while (1);
 
 	return (0);

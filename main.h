@@ -25,14 +25,14 @@ int _strlen(char *str);
 /* print_error.c */
 int _putchar(char c);
 void print_str(char *str, int new_line);
-void print_error(char *av, int count, char *command);
+void print_error(char *av, char *command);
 
 /* print_num.c */
 int print_num(int num);
 
 /* exec_args.c */
-void create_child(char **args, char *lineptr, char **av, int count);
-void exec_command(char **av, char *lineptr, size_t bufsize, int cmd_count);
+void create_child(char **args, char *lineptr, char **av);
+void exec_command(char **av, char *lineptr, size_t bufsize);
 void free_at_once(int n, ...);
 
 /* builtins.c */

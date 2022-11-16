@@ -38,11 +38,10 @@ void print_str(char *str, int new_line)
  * @command: command not found to be printed
  * Return: nothing
  */
-void print_error(char *av, int count, char *command)
+void print_error(char *av, char *command)
 {
 	print_str(av, 0);
-	print_str(": ", 0);
-	print_num(count);
+	print_str(": 1", 0);
 	print_str(": ", 0);
 	print_str(command, 0);
 	/* print_str(": not found", 1); */

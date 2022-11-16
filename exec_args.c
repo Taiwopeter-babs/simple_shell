@@ -7,7 +7,7 @@
  * @count: number of commands
  * Return: nothing
  */
-void create_child(char **args, char *lineptr, char **av, int count)
+void create_child(char **args, char *lineptr, char **av)
 {
 	pid_t pid;
 	struct stat statbuf;
@@ -24,7 +24,7 @@ void create_child(char **args, char *lineptr, char **av, int count)
 		check = stat(temp_command, &statbuf);
 		if (check == -1)
 		{
-			print_error(av[0], count, temp_command);
+			print_error(av[0], temp_command);
 			print_str(": not found", 1);
 			free_at_once(1, lineptr);
 			for (i = 0; args[i]; i++)
@@ -60,7 +60,7 @@ void create_child(char **args, char *lineptr, char **av, int count)
  * @cmd_count: number of commands input
  * Return: nothing
  */
-void exec_command(char **av, char *lineptr, size_t bufsize, int cmd_count)
+void exec_command(char **av, char *lineptr, size_t bufsize)
 {
 	char *delim = " \n\t";
 	char **args;
@@ -83,7 +83,7 @@ void exec_command(char **av, char *lineptr, size_t bufsize, int cmd_count)
 		}
 		i = exec_builtin(args, lineptr);
 		if (i == -1)
-			create_child(args, lineptr, av, cmd_count);
+			create_child(args, lineptr, av);
 
 		for (i = 0; args[i] != NULL; i++)
 			free(args[i]);
