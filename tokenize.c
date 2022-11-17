@@ -1,66 +1,94 @@
-#include "main.h"
+#include "shell.h"
+
 /**
- * count_token - count the number of tokens gotten
- * so memory can be allocated
- * @lineptr: pointer to string on the shell stdin
- * @delim: delimiters separating each token
- * Description: Duplicate the lineptr so you can work with it
- * Return: number of tokens, or -1 on error
+ * **strtow - splits a string into words. Repeat delimiters are ignored
+ * @str: the input string
+ * @d: the delimeter string
+ * Return: a pointer to an array of strings, or NULL on failure
  */
-int count_token(char *lineptr, char *delim)
+
+char **strtow(char *str, char *d)
 {
-	char *str;
-	char *token;
-	int count;
+	int i, j, k, m, numwords = 0;
+	char **s;
 
-	str = _strdup(lineptr);
-	if (str == NULL)
-		return (-1);
+	if (str == NULL || str[0] == 0)
+		return (NULL);
+	if (!d)
+		d = " ";
+	for (i = 0; str[i] != '\0'; i++)
+		if (!is_delim(str[i], d) && (is_delim(str[i + 1], d) || !str[i + 1]))
+			numwords++;
 
-	token = strtok(str, delim);
-
-	for (count = 0; token != NULL; count++)
+	if (numwords == 0)
+		return (NULL);
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
+		return (NULL);
+	for (i = 0, j = 0; j < numwords; j++)
 	{
-		token = strtok(NULL, delim);
+		while (is_delim(str[i], d))
+			i++;
+		k = 0;
+		while (!is_delim(str[i + k], d) && str[i + k])
+			k++;
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
+		{
+			for (k = 0; k < j; k++)
+				free(s[k]);
+			free(s);
+			return (NULL);
+		}
+		for (m = 0; m < k; m++)
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-	free(str);
-	return (count);
+	s[j] = NULL;
+	return (s);
 }
 
-
 /**
- * tokenize_input - tokenize the input
- * @lineptr: pointer to string on shell stdout
- * @delim: delimiters separating the string tokens
- * Return: pointer to buffer storing the tokenized string
+ * **strtow2 - splits a string into words
+ * @str: the input string
+ * @d: the delimeter
+ * Return: a pointer to an array of strings, or NULL on failure
  */
-char **tokenize_input(char *lineptr, char *delim)
+char **strtow2(char *str, char d)
 {
-	char **buffer;
-	char *token;
-	char *str;
-	int i, token_count;
+	int i, j, k, m, numwords = 0;
+	char **s;
 
-	token_count = count_token(lineptr, delim);
-
-	buffer = malloc(sizeof(char *) * (token_count + 1));
-	if (buffer == NULL)
+	if (str == NULL || str[0] == 0)
 		return (NULL);
-
-	str = _strdup(lineptr);
-	token = strtok(str, delim);
-
-	i = 0;
-	while (token != NULL)
+	for (i = 0; str[i] != '\0'; i++)
+		if ((str[i] != d && str[i + 1] == d) ||
+		    (str[i] != d && !str[i + 1]) || str[i + 1] == d)
+			numwords++;
+	if (numwords == 0)
+		return (NULL);
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
+		return (NULL);
+	for (i = 0, j = 0; j < numwords; j++)
 	{
-		buffer[i] = _strdup(token);
-		token = strtok(NULL, delim);
-		i++;
+		while (str[i] == d && str[i] != d)
+			i++;
+		k = 0;
+		while (str[i + k] != d && str[i + k] && str[i + k] != d)
+			k++;
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
+		{
+			for (k = 0; k < j; k++)
+				free(s[k]);
+			free(s);
+			return (NULL);
+		}
+		for (m = 0; m < k; m++)
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-	buffer[i] = NULL;
-
-	free(str);
-	/*free(lineptr);*/
-
-	return (buffer);
+	s[j] = NULL;
+	return (s);
 }
