@@ -1,112 +1,97 @@
-#include "main.h"
-/**
- * exit_built - exits the shell program
- * @lineptr: pointer to strings of arguments in shell
- * Return: nothing
- */
-<<<<<<< HEAD
-=======
+#include "shell.h"
 
->>>>>>> 22220f1b578f4724b09aebc5dac8d442176223b6
-void exit_built(char *lineptr)
-{
-	free(lineptr);
-	/* print_str("\n", 0); */
-	exit(1);
-}
 /**
- * env_shell - prints the current enviroment of shell
- * @args: pointer to strings of arguments in shell
- * Return: nothing
+ * _myexit - exits the shell
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: exits with a given exit status
+ *         (0) if info.argv[0] != "exit"
  */
-<<<<<<< HEAD
-void env_shell(char _attribute_((unused)) *args)
-=======
-void env_shell(char __attribute__((unused)) *args)
->>>>>>> 22220f1b578f4724b09aebc5dac8d442176223b6
+int _myexit(info_t *info)
 {
-	size_t k, j;
+	int exitcheck;
 
-	k = 0;
-	while (environ[k] != NULL)
+	if (info->argv[1])  /* If there is an exit arguement */
 	{
-		j = 0;
-		while (environ[k][j] != '\0')
+		exitcheck = _erratoi(info->argv[1]);
+		if (exitcheck == -1)
 		{
-			write(STDOUT_FILENO, &environ[k][j], 1);
-			j++;
+			info->status = 2;
+			print_error(info, "Illegal number: ");
+			_eputs(info->argv[1]);
+			_eputchar('\n');
+			return (1);
 		}
-		write(STDOUT_FILENO, "\n", 1);
-		k++;
+		info->err_num = _erratoi(info->argv[1]);
+		return (-2);
 	}
+	info->err_num = -1;
+	return (-2);
 }
+
 /**
- * get_builtin - gets the appropriate builtin command
- * @args: command argument on shell
- * Return: pointer to corresponding function, otherwise NULL
+ * _mycd - changes the current directory of the process
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: Always 0
  */
-void (*get_builtin(char *args))(char *args)
+int _mycd(info_t *info)
 {
-	builtin_f builtin_func[] = {
-			{"exit", exit_built},
-			{"env", env_shell},
-			{NULL, NULL}
-	};
-	int k;
+	char *s, *dir, buffer[1024];
+	int chdir_ret;
 
-	k = 0;
-	while (builtin_func[k].cmd != NULL)
+	s = getcwd(buffer, 1024);
+	if (!s)
+		_puts("TODO: >>getcwd failure emsg here<<\n");
+	if (!info->argv[1])
 	{
-		if (_strcmp(builtin_func[k].cmd, args) == 0)
-			return (builtin_func[k].func);
-		k++;
+		dir = _getenv(info, "HOME=");
+		if (!dir)
+			chdir_ret = /* TODO: what should this be? */
+				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
+		else
+			chdir_ret = chdir(dir);
 	}
-	return (NULL);
-
-}
-/**
- * exec_builtin - executes the builtin function
- * @args: command arguments in shell
- * @lineptr: line input read from user
- * Return: -1 if builtin doesn't exist in struct,
- * otherwise, 0 on success
- */
-int exec_builtin(char **args, char *lineptr)
-{
-	int i;
-	void (*func)(char *);
-
-	func = get_builtin(args[0]);
-	if (func == NULL)
-		return (-1);
-	if (_strcmp(args[0], "exit") == 0)
+	else if (_strcmp(info->argv[1], "-") == 0)
 	{
-		for (i = 0; args[i] != NULL; i++)
-			free(args[i]);
-		free(args);
+		if (!_getenv(info, "OLDPWD="))
+		{
+			_puts(s);
+			_putchar('\n');
+			return (1);
+		}
+		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
+		chdir_ret = /* TODO: what should this be? */
+			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
 	}
-	func(lineptr);
+	else
+		chdir_ret = chdir(info->argv[1]);
+	if (chdir_ret == -1)
+	{
+		print_error(info, "can't cd to ");
+		_eputs(info->argv[1]), _eputchar('\n');
+	}
+	else
+	{
+		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
+		_setenv(info, "PWD", getcwd(buffer, 1024));
+	}
 	return (0);
 }
+
 /**
- * _strcmp - compares two strings
- * @s1: first string
- * @s2: second string
- * Return: 0 if they are equal, otherwise a positive value
- * if s1 > s2, or negative value if s1 < s2
+ * _myhelp - changes the current directory of the process
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: Always 0
  */
-int _strcmp(char *s1, char *s2)
+int _myhelp(info_t *info)
 {
-	int k;
-	int value;
+	char **arg_array;
 
-	value = 0;
-	for (k = 0; value == 0; k++)
-	{
-		if (s1[k] == '\0' && s2[k] == '\0')
-			break;
-		value += s1[k] - s2[k];
-
-	}
-	return (value);
+	arg_array = info->argv;
+	_puts("help call works. Function not yet implemented \n");
+	if (0)
+		_puts(*arg_array); /* temp att_unused workaround */
+	return (0);
 }
