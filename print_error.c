@@ -1,85 +1,48 @@
-#include "shell.h"
+#include "main.h"
+/**
+ * _putchar - writes character to stdout
+ * @c: character to be printed
+ * Return: number of bytes written
+ */
+int _putchar(char c)
+{
+	return (write(1, &c, 1));
+}
 
 /**
- *_eputs - prints an input string
- * @str: the string to be printed
- *
- * Return: Nothing
+ * print_str - prints a string to stdout
+ * @str: string parameter
+ * @new_line: if integer is 1, new line will be printed, if 0 newline
+ * will not be printed to stdout
+ * Return: nothing
  */
-void _eputs(char *str)
+void print_str(char *str, int new_line)
 {
-	int i = 0;
+	int i;
 
-	if (!str)
-		return;
+	if (str == NULL)
+		str = "(null)";
+	i = 0;
 	while (str[i] != '\0')
 	{
-		_eputchar(str[i]);
+		write(STDOUT_FILENO, &str[i], 1);
 		i++;
 	}
+	if (new_line == 1)
+		write(STDOUT_FILENO, "\n", 1);
 }
-
 /**
- * _eputchar - writes the character c to stderr
- * @c: The character to print
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * print_error - prints error message to stdout
+ * @av: name of program running shell
+ * @command: command not found to be printed
+ * Return: nothing
  */
-int _eputchar(char c)
+void print_error(char *av, char *command)
 {
-	static int i;
-	static char buf[WRITE_BUF_SIZE];
-
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
-	{
-		write(2, buf, i);
-		i = 0;
-	}
-	if (c != BUF_FLUSH)
-		buf[i++] = c;
-	return (1);
-}
-
-/**
- * _putfd - writes the character c to given fd
- * @c: The character to print
- * @fd: The filedescriptor to write to
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
- */
-int _putfd(char c, int fd)
-{
-	static int i;
-	static char buf[WRITE_BUF_SIZE];
-
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
-	{
-		write(fd, buf, i);
-		i = 0;
-	}
-	if (c != BUF_FLUSH)
-		buf[i++] = c;
-	return (1);
-}
-
-/**
- *_putsfd - prints an input string
- * @str: the string to be printed
- * @fd: the filedescriptor to write to
- *
- * Return: the number of chars put
- */
-int _putsfd(char *str, int fd)
-{
-	int i = 0;
-
-	if (!str)
-		return (0);
-	while (*str)
-	{
-		i += _putfd(*str++, fd);
-	}
-	return (i);
+	print_str(av, 0);
+	print_str(": ", 0);
+	print_num(STDOUT_FILENO);
+	print_str(": ", 0);
+	print_str(command, 0);
+	/* print_str(": not found", 1); */
 }

@@ -37,7 +37,7 @@ void create_child(char **args, char *lineptr, char **av)
 		{
 			if (execve(temp_command, args, environ) == -1)
 			{
-				perror("");
+				perror("Error");
 				exit(1);
 			}
 		}
@@ -62,11 +62,9 @@ void exec_command(char **av, char *lineptr, size_t bufsize)
 {
 	char *delim = " \n\t";
 	char **args;
-	char *prompt = "$ ";
+	char *prompt = "#cisfun$ ";
 	ssize_t nread;
 	int i;
-
-
 
 	write(STDOUT_FILENO, prompt, _strlen(prompt));
 	nread = getline(&lineptr, &bufsize, stdin);

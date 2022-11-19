@@ -1,97 +1,105 @@
-#include "shell.h"
-
+#include "main.h"
 /**
- * _myexit - exits the shell
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: exits with a given exit status
- *         (0) if info.argv[0] != "exit"
+ * exit_built - exits the shell program
+ * @lineptr: pointer to strings of arguments in shell
+ * Return: nothing
  */
-int _myexit(info_t *info)
-{
-	int exitcheck;
 
-	if (info->argv[1])  /* If there is an exit arguement */
-	{
-		exitcheck = _erratoi(info->argv[1]);
-		if (exitcheck == -1)
-		{
-			info->status = 2;
-			print_error(info, "Illegal number: ");
-			_eputs(info->argv[1]);
-			_eputchar('\n');
-			return (1);
-		}
-		info->err_num = _erratoi(info->argv[1]);
-		return (-2);
-	}
-	info->err_num = -1;
-	return (-2);
+void exit_built(char *lineptr)
+{
+	free(lineptr);
+	/* print_str("\n", 0); */
+	exit(1);
 }
-
 /**
- * _mycd - changes the current directory of the process
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: Always 0
+ * env_shell - prints the current enviroment of shell
+ * @args: pointer to strings of arguments in shell
+ * Return: nothing
  */
-int _mycd(info_t *info)
+void env_shell(char __attribute__((unused)) *args)
 {
-	char *s, *dir, buffer[1024];
-	int chdir_ret;
+	size_t k, j;
 
-	s = getcwd(buffer, 1024);
-	if (!s)
-		_puts("TODO: >>getcwd failure emsg here<<\n");
-	if (!info->argv[1])
+	k = 0;
+	while (environ[k] != NULL)
 	{
-		dir = _getenv(info, "HOME=");
-		if (!dir)
-			chdir_ret = /* TODO: what should this be? */
-				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
-		else
-			chdir_ret = chdir(dir);
-	}
-	else if (_strcmp(info->argv[1], "-") == 0)
-	{
-		if (!_getenv(info, "OLDPWD="))
+		j = 0;
+		while (environ[k][j] != '\0')
 		{
-			_puts(s);
-			_putchar('\n');
-			return (1);
+			write(STDOUT_FILENO, &environ[k][j], 1);
+			j++;
 		}
-		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
-		chdir_ret = /* TODO: what should this be? */
-			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
+		write(STDOUT_FILENO, "\n", 1);
+		k++;
 	}
-	else
-		chdir_ret = chdir(info->argv[1]);
-	if (chdir_ret == -1)
+}
+/**
+ * get_builtin - gets the appropriate builtin command
+ * @args: command argument on shell
+ * Return: pointer to corresponding function, otherwise NULL
+ */
+void (*get_builtin(char *args))(char *args)
+{
+	builtin_f builtin_func[] = {
+			{"exit", exit_built},
+			{"env", env_shell},
+			{NULL, NULL}
+	};
+	int k;
+
+	k = 0;
+	while (builtin_func[k].cmd != NULL)
 	{
-		print_error(info, "can't cd to ");
-		_eputs(info->argv[1]), _eputchar('\n');
+		if (_strcmp(builtin_func[k].cmd, args) == 0)
+			return (builtin_func[k].func);
+		k++;
 	}
-	else
+	return (NULL);
+
+}
+/**
+ * exec_builtin - executes the builtin function
+ * @args: command arguments in shell
+ * @lineptr: line input read from user
+ * Return: -1 if builtin doesn't exist in struct,
+ * otherwise, 0 on success
+ */
+int exec_builtin(char **args, char *lineptr)
+{
+	int i;
+	void (*func)(char *);
+
+	func = get_builtin(args[0]);
+	if (func == NULL)
+		return (-1);
+	if (_strcmp(args[0], "exit") == 0)
 	{
-		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
-		_setenv(info, "PWD", getcwd(buffer, 1024));
+		for (i = 0; args[i] != NULL; i++)
+			free(args[i]);
+		free(args);
 	}
+	func(lineptr);
 	return (0);
 }
-
 /**
- * _myhelp - changes the current directory of the process
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: Always 0
+ * _strcmp - compares two strings
+ * @s1: first string
+ * @s2: second string
+ * Return: 0 if they are equal, otherwise a positive value
+ * if s1 > s2, or negative value if s1 < s2
  */
-int _myhelp(info_t *info)
+int _strcmp(char *s1, char *s2)
 {
-	char **arg_array;
+	int k;
+	int value;
 
-	arg_array = info->argv;
-	_puts("help call works. Function not yet implemented \n");
-	if (0)
-		_puts(*arg_array); /* temp att_unused workaround */
-	return (0);
+	value = 0;
+	for (k = 0; value == 0; k++)
+	{
+		if (s1[k] == '\0' && s2[k] == '\0')
+			break;
+		value += s1[k] - s2[k];
+
+	}
+	return (value);
 }
