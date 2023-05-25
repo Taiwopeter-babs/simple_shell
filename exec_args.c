@@ -62,7 +62,7 @@ void exec_command(char **av, char *lineptr, size_t bufsize)
 {
 	char *delim = " \n\t";
 	char **args;
-	char *prompt = "#cisfun$ ";
+	char *prompt = "";
 	ssize_t nread;
 	int i;
 
